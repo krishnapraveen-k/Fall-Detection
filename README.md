@@ -1,3 +1,29 @@
+# Wearable Embedded ML-Based Fall Detection System
+
+A real-time wearable fall detection system built on a Seeed XIAO microcontroller, 
+combining on-device machine learning inference with BLE wireless connectivity. 
+Developed as part of my MSc in Embedded and Control Systems Engineering at the 
+University of Leicester.
+
+---
+
+## System Overview
+
+The system continuously reads 6-axis IMU data (accelerometer + gyroscope) at 100Hz, 
+runs an on-device ML classifier trained via Edge Impulse, and transmits fall alerts 
+wirelessly over BLE to a companion Android application in real time.
+
+---
+
+## Repository Structure
+├── CollectDATAwireless.ino   # Data collection firmware
+
+├── FallDetect_inference.ino  # Inference and BLE transmission firmware
+
+├── ei-falldetect-arduino-1.0.1-impulse-#1.zip # ML library zip
+
+└── README.md
+
 ---
 
 ## How It Works
