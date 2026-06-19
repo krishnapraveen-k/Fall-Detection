@@ -5,7 +5,7 @@
 
 // -----------------------------------------------
 // CHANGE THIS BEFORE EACH ACTION TYPE
-char actionPrefix[] = "back";
+char actionPrefix[] = "back"; // front faal, back fall, sit, stand
 // -----------------------------------------------
 
 LSM6DS3 xIMU(I2C_MODE, 0x6A);
@@ -27,15 +27,17 @@ void setup()
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   randomSeed(analogRead(A0));
 
-  xIMU.begin();
+  xIMU.begin(); // IMU initialization
 
-  SD.begin(SD_CS_PIN);
+  SD.begin(SD_CS_PIN); // SDCard initialization
 }
 
 void loop() 
 {
 
   // ----------------- BUTTON -----------------
+  // The process after this point will begin once the button is pressed
+  // and it will stop writing this iteration when the button is pressed for the second time
   if (digitalRead(BUTTON_PIN) == LOW) 
   {
     delay(50);
@@ -44,17 +46,18 @@ void loop()
       if (!recording) 
       {
         sprintf(filename, "%s%04d.txt", actionPrefix, (int)random(10000));
-        myFile = SD.open(filename, FILE_WRITE);
+        myFile = SD.open(filename, FILE_WRITE); // Opening File
         if (myFile) 
         {
           myFile.print("time,accX,accY,accZ,gyroX,gyroY,gyroZ\n");
           startTime = 0;
           recording = true;
         }
-
-      } else {
+      } 
+      else 
+      {
         myFile.flush();
-        myFile.close();
+        myFile.close(); // Closing File
         recording = false;
       }
 
