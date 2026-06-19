@@ -13,29 +13,33 @@ BLEStringCharacteristic fallCharacteristic("2A37", BLERead | BLENotify, 50);
 float features[EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE];
 int featureIndex = 0;
 
-// Timing
+// Timing for 100Hz sampling
 unsigned long lastSample = 0;
 
-void setup() {
-  delay(1000);
+void setup() 
+{
+  delay(1000); // Buffer time
 
-  xIMU.begin();
+  xIMU.begin(); // Initialize IMU
+  BLE.begin();  // Initialize BLE
 
-  BLE.begin();
   BLE.setLocalName("FallDetector");
   BLE.setAdvertisedService(fallService);
   fallService.addCharacteristic(fallCharacteristic);
   BLE.addService(fallService);
-  fallCharacteristic.writeValue("ready");
+  
+  fallCharacteristic.writeValue("ready"); // Initial broadcast
   BLE.advertise();
 }
 
-void loop() {
+void loop() 
+{
   BLEDevice central = BLE.central();
 
-  if (central) {
-    while (central.connected()) {
-
+  if (central) 
+  {
+    while (central.connected()) 
+    {
       // ----------------- SAMPLE AT 100Hz -----------------
       unsigned long now = millis();
       if (now - lastSample < 10) continue;
@@ -50,7 +54,8 @@ void loop() {
       features[featureIndex++] = xIMU.readFloatGyroZ();
 
       // ----------------- RUN INFERENCE WHEN BUFFER FULL -----------------
-      if (featureIndex >= EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE) {
+      if (featureIndex >= EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE) 
+      {
         featureIndex = 0;
 
         signal_t signal;
@@ -62,8 +67,10 @@ void loop() {
         // Find highest confidence label
         float maxVal = 0;
         const char* maxLabel = "";
-        for (int i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++) {
-          if (result.classification[i].value > maxVal) {
+        for (int i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++) 
+        {
+          if (result.classification[i].value > maxVal) 
+          {
             maxVal = result.classification[i].value;
             maxLabel = result.classification[i].label;
           }
